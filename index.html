@@ -22,45 +22,25 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
         
-        .header {
-            background-color: white;
-            padding: 20px 30px;
-            border-bottom: 3px solid #E51F30;
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .logo {
-            width: 50px;
-            height: 50px;
-        }
-        
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .logo-griffith {
-            font-size: 28px;
-            font-weight: bold;
-            color: #E51F30;
-        }
-        
-        .logo-university {
-            font-size: 24px;
-            font-weight: 300;
-            color: #000;
-        }
-        
-        .logo-location {
-            font-size: 14px;
-            color: #333;
-            margin-top: -5px;
-        }
+.header {
+    background-color: white;
+    padding: 15px 30px; /* Slightly adjusted padding for the image */
+    border-bottom: 3px solid #E51F30;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+/* New class for the image logo */
+.logo-img {
+    max-height: 50px; /* Adjusts height to fit the header nicely */
+    width: auto;      /* Maintains aspect ratio */
+    display: block;
+}
+
+/* You can remove the old classes: .logo, .logo-text, .logo-griffith, .logo-university, .logo-location */
         
         .progress-container {
             background-color: #f0f0f0;
@@ -477,18 +457,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="50,10 20,90 50,70 80,90" fill="#E51F30"/>
-                </svg>
-                <div class="logo-text">
-                    <div>
-                        <span class="logo-griffith">Griffith</span><span class="logo-university">UNIVERSITY</span>
-                    </div>
-                    <div class="logo-location">Queensland, Australia</div>
-                </div>
-            </div>
+       <div class="header">
+    <div class="logo-container">
+        <img src="griffith-logo.png" alt="Griffith University Logo" class="logo-img">
+    </div>
+</div>
         </div>
         
         <div class="progress-container">

@@ -14,13 +14,14 @@
             line-height: 1.6;
         }
         
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: white;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
+.container {
+    max-width: 900px;
+    margin: 30px auto; /* Adds space top/bottom so it looks like a card */
+    background-color: white;
+    min-height: auto;  /* Allows container to shrink to fit content */
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding-bottom: 10px; /* Adds a little buffer at the very bottom */
+}
         
 .header {
     background-color: white;
@@ -92,10 +93,10 @@
             background-color: white;
         }
         
-        .content {
-            padding: 20px 25px;
-            min-height: 400px;
-        }
+.content {
+    padding: 20px 40px; /* Slightly relaxed padding since you felt it was too tight */
+    min-height: auto;   /* Removes the forced white space */
+}
         
         .screen {
             display: none;
@@ -114,7 +115,7 @@
         .hero {
             background: linear-gradient(135deg, #BE2831 0%, #E51F30 100%);
             color: white;
-            padding: 25px 30px;
+            padding: 40px 40px;
             text-align: center;
             margin: -40px -30px 20px -30px;
             border-radius: 0;
@@ -338,13 +339,13 @@
         }
         
         .button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;      /* Removed the gap */
+    padding: 20px 40px; /* Matches content padding */
+    border-top: 1px solid #ddd;
+}
         
         .btn {
             padding: 12px 30px;

@@ -1,0 +1,2963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Technique Selection - Griffith University</title>
+    <meta name="description" content="Interactive musculoskeletal assessment planning tool">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background-color: white;
+            padding: 20px 30px;
+            border-bottom: 3px solid #E51F30;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-griffith {
+            font-size: 28px;
+            font-weight: bold;
+            color: #E51F30;
+        }
+        
+        .logo-university {
+            font-size: 24px;
+            font-weight: 300;
+            color: #000;
+        }
+        
+        .logo-location {
+            font-size: 14px;
+            color: #333;
+            margin-top: -5px;
+        }
+        
+        .progress-container {
+            background-color: #f0f0f0;
+            padding: 15px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .progress-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .progress-step {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            padding: 5px 8px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .progress-step.completed {
+            color: #E51F30;
+            font-weight: bold;
+        }
+        
+        .progress-step.active {
+            color: white;
+            font-weight: bold;
+            background-color: #E51F30;
+        }
+        
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin: 0 auto 3px;
+        }
+        
+        .progress-step.completed .progress-dot {
+            background-color: #E51F30;
+        }
+        
+        .progress-step.active .progress-dot {
+            background-color: white;
+        }
+        
+        .content {
+            padding: 40px 30px;
+            min-height: 500px;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #BE2831 0%, #E51F30 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            margin: -40px -30px 40px -30px;
+            border-radius: 0;
+        }
+        
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .hero p {
+            font-size: 16px;
+            margin-top: 30px;
+        }
+        
+        .hero a {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #000;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .instructions {
+            background-color: #f9f9f9;
+            border-left: 4px solid #E51F30;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #E51F30;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-small:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            margin-top: 3px;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            font-size: 14px;
+        }
+        
+        .checkbox-item input[type="checkbox"]:checked + label {
+            font-weight: bold;
+        }
+        
+        .clearing-test {
+            color: #BE2831;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            color: #4A90E2;
+            font-weight: bold;
+            margin-left: 3px;
+        }
+        
+        .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .column-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .column {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .column h4 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E51F30;
+            color: #000;
+        }
+        
+        .info-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: #4A90E2;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
+        .report-display {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 25px;
+            border-radius: 4px;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .report-section {
+            margin-bottom: 20px;
+        }
+        
+        .report-section h4 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #E51F30;
+        }
+        
+        .report-section ul {
+            margin-left: 20px;
+        }
+        
+        .report-section li {
+            margin-bottom: 5px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #4A90E2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #357ABD;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .btn-generate {
+            background-color: #E51F30;
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            display: block;
+            margin: 20px auto;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-generate:hover {
+            background-color: #BE2831;
+        }
+        
+        .end-screen {
+            background: linear-gradient(135deg, #BE2831 0%, #E51F30 100%);
+            color: white;
+            padding: 100px 40px;
+            text-align: center;
+            margin: -40px -30px -40px -30px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .end-screen h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .end-screen p {
+            font-size: 18px;
+        }
+        
+        @media (max-width: 768px) {
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .column-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .button-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+        }
+        
+        @media print {
+            .header, .progress-container, .button-container {
+                display: none;
+            }
+            .content {
+                padding: 20px;
+            }
+            .screen {
+                display: block !important;
+                page-break-after: always;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <svg class="logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,10 20,90 50,70 80,90" fill="#E51F30"/>
+                </svg>
+                <div class="logo-text">
+                    <div>
+                        <span class="logo-griffith">Griffith</span><span class="logo-university">UNIVERSITY</span>
+                    </div>
+                    <div class="logo-location">Queensland, Australia</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="content" id="contentArea">
+            <!-- SCREEN 0: Title -->
+            <div class="screen active" data-screen-id="title">
+                <div class="hero">
+                    <h1>Select your Objective Assessments</h1>
+                    <p>By Dr Neil Tuttle, PhD, SFHEA, for the<br>
+                    <a href="https://www.griffith.edu.au/study/degrees/master-of-musculoskeletal-and-sports-physiotherapy-5727" target="_blank">Master of Musculoskeletal and Sports Physiotherapy</a></p>
+                </div>
+                <div class="instructions">
+                    <p><strong>Welcome to the Assessment Technique Selection Tool</strong></p>
+                    <p>This interactive tool helps you build a customized physical assessment plan for your patient based on their symptoms and clinical presentation.</p>
+                    <p><strong>How to use this tool:</strong></p>
+                    <ul>
+                        <li>Navigate through each assessment category using the NEXT and PREV buttons</li>
+                        <li>Select the assessments relevant to your patient's presentation</li>
+                        <li>Tests marked with an asterisk (*) are clearing tests</li>
+                        <li>Routine assessments are pre-selected by default</li>
+                        <li>Selected items will appear in <strong>bold</strong></li>
+                        <li>Use the search box to quickly find specific tests</li>
+                        <li>At the end, generate a report of your selected assessments</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- SCREEN 1: Neurological -->
+            <div class="screen" data-screen-id="neuro">
+                <h2>Neurological / VBI/Dizziness assessment</h2>
+                <p>In a musculoskeletal assessment, neurological assessments include elements of strength, reflexes and sensory disturbance. They are grouped by body region.</p>
+                <p>Other testing that may be required are included in this section including neural provocation tests as well as VBI and Dix-Hallpike tests for BPPV</p>
+                <p style="margin-top: 20px;"><strong>Which of these would you assess with this patient? Select as many options as necessary, or leave it blank if you don't believe any are needed:</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('neuro')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('neuro')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search assessments..." onkeyup="filterTests(this, 'neuro')">
+                
+                <div class="checkbox-grid" data-category="neuro">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="neuro-1" data-category="neuro" data-label="Upper limb">
+                        <label for="neuro-1">Upper limb</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="neuro-2" data-category="neuro" data-label="Lower limb">
+                        <label for="neuro-2">Lower limb</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="neuro-3" data-category="neuro" data-label="Cranial nerves">
+                        <label for="neuro-3">Cranial nerves</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="neuro-4" data-category="neuro" data-label="VBI testing">
+                        <label for="neuro-4">VBI testing</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="neuro-5" data-category="neuro" data-label="Dix Hallpike">
+                        <label for="neuro-5">Dix Hallpike</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: Neurodynamic -->
+            <div class="screen" data-screen-id="neurodynamic">
+                <h2>Neurodynamic Testing</h2>
+                <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+                <p>Selected items will be shown in <strong>Bold</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('neurodynamic')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('neurodynamic')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'neurodynamic')">
+                
+                <div class="column-layout">
+                    <div class="column">
+                        <h4>Upper Limb</h4>
+                        <div class="checkbox-grid" data-category="neurodynamic">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-1" data-category="neurodynamic" data-label="Median Nerve 1">
+                                <label for="neurodynamic-1">Median Nerve 1</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-2" data-category="neurodynamic" data-label="Median Nerve 2">
+                                <label for="neurodynamic-2">Median Nerve 2</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-3" data-category="neurodynamic" data-label="Radial Nerve">
+                                <label for="neurodynamic-3">Radial Nerve</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-4" data-category="neurodynamic" data-label="Ulnar Nerve">
+                                <label for="neurodynamic-4">Ulnar Nerve</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Lower Limb</h4>
+                        <div class="checkbox-grid" data-category="neurodynamic">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-5" data-category="neurodynamic" data-label="Straight Leg Raise (SLR)">
+                                <label for="neurodynamic-5">Straight Leg Raise (SLR)
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Straight Leg Raise</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-6" data-category="neurodynamic" data-label="Passive Neck Flexion (PNF)">
+                                <label for="neurodynamic-6">Passive Neck Flexion (PNF)
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Neck Flexion</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-7" data-category="neurodynamic" data-label="Prone Knee Bend (PKB)">
+                                <label for="neurodynamic-7">Prone Knee Bend (PKB)
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Prone Knee Bend</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Combined</h4>
+                        <div class="checkbox-grid" data-category="neurodynamic">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-8" data-category="neurodynamic" data-label="Slump Test">
+                                <label for="neurodynamic-8">Slump Test</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="neurodynamic-9" data-category="neurodynamic" data-label="Sidelying Slump Test + PKB">
+                                <label for="neurodynamic-9">Sidelying Slump Test + PKB
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Prone Knee Bend</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: Articulations Selection -->
+            <div class="screen" data-screen-id="articulations-select">
+                <h2>Articulations</h2>
+                <p>Select all regions where you want to assess the articular structures.</p>
+                <p>Typically you will select all regions that lie under the patient's symptoms, can refer to the area of their symptoms, or need to be assessed as potential contributing factors.</p>
+                <p style="margin-top: 15px;"><strong>You will then be able to select which specific assessments of articulations in that region you want to perform.</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('articulations-select')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('articulations-select')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search regions..." onkeyup="filterTests(this, 'articulations-select')">
+                
+                <div class="checkbox-grid" data-category="articulations-select">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-cx" data-category="articulations-select" data-screen="cx" data-label="Cervical Spine (Cx)">
+                        <label for="artic-cx">Cervical Spine (Cx)
+                        <span class="tooltip">ⓘ<span class="tooltiptext">Cervical Spine</span></span>
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-hip" data-category="articulations-select" data-screen="hip" data-label="Hip">
+                        <label for="artic-hip">Hip</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-tmj" data-category="articulations-select" data-screen="tmj" data-label="TMJ">
+                        <label for="artic-tmj">TMJ
+                        <span class="tooltip">ⓘ<span class="tooltiptext">Temporomandibular Joint</span></span>
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-sij" data-category="articulations-select" data-screen="sij" data-label="SIJ + Pelvis">
+                        <label for="artic-sij">SIJ + Pelvis
+                        <span class="tooltip">ⓘ<span class="tooltiptext">Sacroiliac Joint</span></span>
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-shoulder" data-category="articulations-select" data-screen="shoulder" data-label="Shoulder">
+                        <label for="artic-shoulder">Shoulder</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-knee" data-category="articulations-select" data-screen="knee" data-label="Knee">
+                        <label for="artic-knee">Knee</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-elbow" data-category="articulations-select" data-screen="elbow" data-label="Elbow">
+                        <label for="artic-elbow">Elbow</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-ankle" data-category="articulations-select" data-screen="ankle" data-label="Ankle + Foot">
+                        <label for="artic-ankle">Ankle + Foot</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-wrist" data-category="articulations-select" data-screen="wrist" data-label="Wrist + Hand">
+                        <label for="artic-wrist">Wrist + Hand</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-tx" data-category="articulations-select" data-screen="tx" data-label="Thoracic Spine (Tx)">
+                        <label for="artic-tx">Thoracic Spine (Tx)
+                        <span class="tooltip">ⓘ<span class="tooltiptext">Thoracic Spine</span></span>
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="artic-lx" data-category="articulations-select" data-screen="lx" data-label="Lumbar Spine (Lx)">
+                        <label for="artic-lx">Lumbar Spine (Lx)
+                        <span class="tooltip">ⓘ<span class="tooltiptext">Lumbar Spine</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: Thoracic Spine (conditional) -->
+            <div class="screen" data-screen-id="tx" data-conditional="true">
+                <h2>Thoracic Spine (Tx)</h2>
+                <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+                <p>Clearing tests are indicated by an asterisk (*).</p>
+                <p>Selected items will be shown in <strong>Bold</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('tx')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('tx')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'tx')">
+                
+                <div class="column-layout">
+                    <div class="column">
+                        <h4>Sitting</h4>
+                        <div class="checkbox-grid" data-category="tx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-1" checked data-category="tx" data-label="*Tx Flexion">
+                                <label for="tx-1"><span class="clearing-test">*Tx Flexion</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Thoracic Flexion</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-2" checked data-category="tx" data-label="*Tx Extension">
+                                <label for="tx-2"><span class="clearing-test">*Tx Extension</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Thoracic Extension</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-3" checked data-category="tx" data-label="Tx Rotation">
+                                <label for="tx-3">Tx Rotation
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Thoracic Rotation</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-4" checked data-category="tx" data-label="*Tx Lateral Flexion">
+                                <label for="tx-4"><span class="clearing-test">*Tx Lateral Flexion</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Thoracic Lateral Flexion</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-5" data-category="tx" data-label="Tx Outlet - Roos Test (EAST)">
+                                <label for="tx-5">Tx Outlet - Roos Test (EAST)
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Elevated Arm Stress Test</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-6" data-category="tx" data-label="Tx Outlet - Adson's Manoeuvre">
+                                <label for="tx-6">Tx Outlet - Adson's Manoeuvre</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-7" data-category="tx" data-label="Tx Outlet - Costoclavicular Syndrome Test">
+                                <label for="tx-7">Tx Outlet - Costoclavicular Syndrome Test</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Prone</h4>
+                        <div class="checkbox-grid" data-category="tx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-8" checked data-category="tx" data-label="*Tx Central PA">
+                                <label for="tx-8"><span class="clearing-test">*Tx Central PA</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-9" data-category="tx" data-label="Tx Unilateral PA">
+                                <label for="tx-9">Tx Unilateral PA
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-10" data-category="tx" data-label="Tx CVJ PA">
+                                <label for="tx-10">Tx CVJ PA
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Costovertebral Joint Posteroanterior</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-11" checked data-category="tx" data-label="Tx Transverse Glides">
+                                <label for="tx-11">Tx Transverse Glides</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Sidelying/Other</h4>
+                        <div class="checkbox-grid" data-category="tx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-12" data-category="tx" data-label="Tx Central PA">
+                                <label for="tx-12">Tx Central PA
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tx-13" data-category="tx" data-label="Tx Unilateral PA">
+                                <label for="tx-13">Tx Unilateral PA
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: Lumbar Spine (conditional) -->
+            <div class="screen" data-screen-id="lx" data-conditional="true">
+                <h2>Lumbar Spine (Lx)</h2>
+                <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+                <p>Clearing tests are indicated by an asterisk (*).</p>
+                <p>Selected items will be shown in <strong>Bold</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('lx')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('lx')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'lx')">
+                
+                <div class="column-layout">
+                    <div class="column">
+                        <h4>Standing</h4>
+                        <div class="checkbox-grid" data-category="lx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-1" checked data-category="lx" data-label="*Lx Flexion">
+                                <label for="lx-1"><span class="clearing-test">*Lx Flexion</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Lumbar Flexion</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-2" checked data-category="lx" data-label="Lx Extension">
+                                <label for="lx-2">Lx Extension
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Lumbar Extension</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-3" checked data-category="lx" data-label="Lx Lateral Flexion">
+                                <label for="lx-3">Lx Lateral Flexion
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Lumbar Lateral Flexion</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-4" data-category="lx" data-label="Lx Rotation">
+                                <label for="lx-4">Lx Rotation</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-5" data-category="lx" data-label="Lx Repeated Flexion">
+                                <label for="lx-5">Lx Repeated Flexion</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-6" data-category="lx" data-label="Lx Repeated Extension">
+                                <label for="lx-6">Lx Repeated Extension</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-7" data-category="lx" data-label="*Lx Quadrant">
+                                <label for="lx-7"><span class="clearing-test">*Lx Quadrant</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Sitting</h4>
+                        <div class="checkbox-grid" data-category="lx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-8" data-category="lx" data-label="Lx Flexion">
+                                <label for="lx-8">Lx Flexion</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-9" data-category="lx" data-label="Lx Extension">
+                                <label for="lx-9">Lx Extension</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-10" data-category="lx" data-label="Lx Lateral Flexion">
+                                <label for="lx-10">Lx Lateral Flexion</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-11" checked data-category="lx" data-label="Lx Rotation">
+                                <label for="lx-11">Lx Rotation</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-12" data-category="lx" data-label="Lx Repeated Flexion">
+                                <label for="lx-12">Lx Repeated Flexion</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-13" data-category="lx" data-label="Lx Repeated Extension">
+                                <label for="lx-13">Lx Repeated Extension</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Sidelying/Other</h4>
+                        <div class="checkbox-grid" data-category="lx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-14" data-category="lx" data-label="Lx Transverse Glide">
+                                <label for="lx-14">Lx Transverse Glide</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-15" data-category="lx" data-label="Lx PPIVM - Flexion">
+                                <label for="lx-15">Lx PPIVM - Flexion
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Physiological Intervertebral Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-16" data-category="lx" data-label="Lx PPIVM - Extension">
+                                <label for="lx-16">Lx PPIVM - Extension
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Physiological Intervertebral Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-17" data-category="lx" data-label="Lx PPIVM - Rotation">
+                                <label for="lx-17">Lx PPIVM - Rotation
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Physiological Intervertebral Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-18" data-category="lx" data-label="Lx PPIVM - Lat Flexion">
+                                <label for="lx-18">Lx PPIVM - Lat Flexion
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Physiological Intervertebral Movement - Lateral Flexion</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="column-layout" style="margin-top: 20px;">
+                    <div class="column">
+                        <h4>Supine</h4>
+                        <div class="checkbox-grid" data-category="lx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-19" data-category="lx" data-label="Lx AP">
+                                <label for="lx-19">Lx AP
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Anteroposterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-20" data-category="lx" data-label="Lx FIL">
+                                <label for="lx-20">Lx FIL
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Flexion in Lying</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-21" data-category="lx" data-label="Lx Knees to side">
+                                <label for="lx-21">Lx Knees to side</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Prone</h4>
+                        <div class="checkbox-grid" data-category="lx">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-22" checked data-category="lx" data-label="*Lx Central PA">
+                                <label for="lx-22"><span class="clearing-test">*Lx Central PA</span>
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-23" checked data-category="lx" data-label="Lx Unilateral PA">
+                                <label for="lx-23">Lx Unilateral PA
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior Pressure</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-24" data-category="lx" data-label="Lx Transverse Glide">
+                                <label for="lx-24">Lx Transverse Glide</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="lx-25" data-category="lx" data-label="Lx FIL">
+                                <label for="lx-25">Lx FIL
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Flexion in Lying</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: Knee (conditional) -->
+            <div class="screen" data-screen-id="knee" data-conditional="true">
+                <h2>Knee</h2>
+                <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+                <p>Clearing tests are indicated by an asterisk (*). Selected items will be shown in <strong>Bold</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('knee')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('knee')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'knee')">
+                
+                <div class="column-layout">
+                    <div class="column">
+                        <h4>Sitting</h4>
+                        <div class="checkbox-grid" data-category="knee">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-1" data-category="knee" data-label="Knee Extension">
+                                <label for="knee-1">Knee Extension</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-2" data-category="knee" data-label="Knee IR Tibia">
+                                <label for="knee-2">Knee IR Tibia</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-3" data-category="knee" data-label="Knee ER Tibia">
+                                <label for="knee-3">Knee ER Tibia</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-4" data-category="knee" data-label="PFJ McConnell's Test">
+                                <label for="knee-4">PFJ McConnell's Test
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Patellofemoral Joint</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Supine</h4>
+                        <div class="checkbox-grid" data-category="knee">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-5" checked data-category="knee" data-label="*Passive Knee Flexion">
+                                <label for="knee-5"><span class="clearing-test">*Passive Knee Flexion</span></label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-6" checked data-category="knee" data-label="*Passive Knee Extension">
+                                <label for="knee-6"><span class="clearing-test">*Passive Knee Extension</span></label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-7" checked data-category="knee" data-label="Lachman's test">
+                                <label for="knee-7">Lachman's test</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-8" data-category="knee" data-label="Knee Internal Tibial Rotation">
+                                <label for="knee-8">Knee Internal Tibial Rotation</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-9" data-category="knee" data-label="Knee External Tibial Rotation">
+                                <label for="knee-9">Knee External Tibial Rotation</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-10" data-category="knee" data-label="Knee PAM - Tibiofemoral Joint">
+                                <label for="knee-10">Knee PAM - Tibiofemoral Joint
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-11" data-category="knee" data-label="Knee PAM - Patellofemoral Joint (PFJ)">
+                                <label for="knee-11">Knee PAM - Patellofemoral Joint (PFJ)
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-12" data-category="knee" data-label="Knee PAM - Superior Tibiofibular Joint">
+                                <label for="knee-12">Knee PAM - Superior Tibiofibular Joint
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-13" checked data-category="knee" data-label="Knee McMurray's Test">
+                                <label for="knee-13">Knee McMurray's Test</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-14" data-category="knee" data-label="Knee Anterior Drawer">
+                                <label for="knee-14">Knee Anterior Drawer</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-15" checked data-category="knee" data-label="Knee Posterior Sag">
+                                <label for="knee-15">Knee Posterior Sag</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-16" checked data-category="knee" data-label="Knee Posterior Drawer">
+                                <label for="knee-16">Knee Posterior Drawer</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-17" checked data-category="knee" data-label="Knee Varus Stress">
+                                <label for="knee-17">Knee Varus Stress</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-18" checked data-category="knee" data-label="Knee Valgus Stress">
+                                <label for="knee-18">Knee Valgus Stress</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-19" data-category="knee" data-label="PFJ McConnell's Test">
+                                <label for="knee-19">PFJ McConnell's Test</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-20" data-category="knee" data-label="PFJ Patella Apprehension Test">
+                                <label for="knee-20">PFJ Patella Apprehension Test</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="knee-21" data-category="knee" data-label="Knee Brush Test">
+                                <label for="knee-21">Knee Brush Test</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+<!-- SCREEN: Cervical Spine (conditional) -->
+<div class="screen" data-screen-id="cx" data-conditional="true">
+    <h2>Cervical Spine (Cx)</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('cx')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('cx')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'cx')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Standing/Sitting</h4>
+            <div class="checkbox-grid" data-category="cx">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-1" checked data-category="cx" data-label="Cx Flexion">
+                    <label for="cx-1">Cx Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-2" checked data-category="cx" data-label="Cx Extension">
+                    <label for="cx-2">Cx Extension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-3" checked data-category="cx" data-label="Cx Rotation">
+                    <label for="cx-3">Cx Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-4" checked data-category="cx" data-label="Cx Lateral Flexion">
+                    <label for="cx-4">Cx Lateral Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-5" data-category="cx" data-label="*Lower Cx Quadrant">
+                    <label for="cx-5"><span class="clearing-test">*Lower Cx Quadrant</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-6" data-category="cx" data-label="*Upper Cx Quadrant">
+                    <label for="cx-6"><span class="clearing-test">*Upper Cx Quadrant</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="cx">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-7" checked data-category="cx" data-label="Cx PPIVMs Rotation">
+                    <label for="cx-7">Cx PPIVMs Rotation
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Physiological Intervertebral Movements</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-8" checked data-category="cx" data-label="Cx PPI VMs Lat FLex">
+                    <label for="cx-8">Cx PPI VMs Lat FLex
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Lateral Flexion</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-9" data-category="cx" data-label="Cx PAIVMs AP">
+                    <label for="cx-9">Cx PAIVMs AP
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Anteroposterior</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Prone</h4>
+            <div class="checkbox-grid" data-category="cx">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-10" checked data-category="cx" data-label="*Cx Central PA">
+                    <label for="cx-10"><span class="clearing-test">*Cx Central PA</span>
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cx-11" checked data-category="cx" data-label="*Cx Unilateral PA">
+                    <label for="cx-11"><span class="clearing-test">*Cx Unilateral PA</span>
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Posteroanterior</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: TMJ (conditional) -->
+<div class="screen" data-screen-id="tmj" data-conditional="true">
+    <h2>TMJ</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('tmj')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('tmj')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'tmj')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Standing/Sitting</h4>
+            <div class="checkbox-grid" data-category="tmj">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-1" checked data-category="tmj" data-label="*TMJ Open">
+                    <label for="tmj-1"><span class="clearing-test">*TMJ Open</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-2" checked data-category="tmj" data-label="*TMJ Close">
+                    <label for="tmj-2"><span class="clearing-test">*TMJ Close</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-3" checked data-category="tmj" data-label="TMJ Lateral Deviation">
+                    <label for="tmj-3">TMJ Lateral Deviation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-4" checked data-category="tmj" data-label="TMJ Protrusion">
+                    <label for="tmj-4">TMJ Protrusion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-5" checked data-category="tmj" data-label="TMJ Retrusion">
+                    <label for="tmj-5">TMJ Retrusion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-6" checked data-category="tmj" data-label="*TMJ Bite">
+                    <label for="tmj-6"><span class="clearing-test">*TMJ Bite</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="tmj">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-7" data-category="tmj" data-label="TMJ PAM - Lateral">
+                    <label for="tmj-7">TMJ PAM - Lateral
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-8" data-category="tmj" data-label="TMJ PAM - Distraction">
+                    <label for="tmj-8">TMJ PAM - Distraction</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Sidelying/Other</h4>
+            <div class="checkbox-grid" data-category="tmj">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-9" data-category="tmj" data-label="TMJ PAM - PA">
+                    <label for="tmj-9">TMJ PAM - PA</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="tmj-10" data-category="tmj" data-label="TMJ PAM - Medial">
+                    <label for="tmj-10">TMJ PAM - Medial</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Shoulder (conditional) -->
+<div class="screen" data-screen-id="shoulder" data-conditional="true">
+    <h2>Shoulder</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('shoulder')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('shoulder')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'shoulder')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Standing</h4>
+            <div class="checkbox-grid" data-category="shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-1" checked data-category="shoulder" data-label="Sh Flexion">
+                    <label for="shoulder-1">Sh Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-2" checked data-category="shoulder" data-label="Sh Abduction">
+                    <label for="shoulder-2">Sh Abduction</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-3" checked data-category="shoulder" data-label="Sh External Rotation">
+                    <label for="shoulder-3">Sh External Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-4" checked data-category="shoulder" data-label="Sh Internal Rotation">
+                    <label for="shoulder-4">Sh Internal Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-5" checked data-category="shoulder" data-label="Sh Horizontal Adduction">
+                    <label for="shoulder-5">Sh Horizontal Adduction</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-6" checked data-category="shoulder" data-label="Sh Extension">
+                    <label for="shoulder-6">Sh Extension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-7" data-category="shoulder" data-label="*Hand behind Back">
+                    <label for="shoulder-7"><span class="clearing-test">*Hand behind Back</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-8" data-category="shoulder" data-label="*Hand behind head">
+                    <label for="shoulder-8"><span class="clearing-test">*Hand behind head</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-9" data-category="shoulder" data-label="*Hand behind Opposite Shoulder">
+                    <label for="shoulder-9"><span class="clearing-test">*Hand behind Opposite Shoulder</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-10" data-category="shoulder" data-label="Hawkins-Kennedy Test">
+                    <label for="shoulder-10">Hawkins-Kennedy Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-11" data-category="shoulder" data-label="Neer's Test">
+                    <label for="shoulder-11">Neer's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-12" data-category="shoulder" data-label="Sh Apprehension test">
+                    <label for="shoulder-12">Sh Apprehension test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-13" data-category="shoulder" data-label="Sh Anterior Drawer Test">
+                    <label for="shoulder-13">Sh Anterior Drawer Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-14" data-category="shoulder" data-label="Sh Load and Shift Test">
+                    <label for="shoulder-14">Sh Load and Shift Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-15" data-category="shoulder" data-label="Sh Posterior Apprehension">
+                    <label for="shoulder-15">Sh Posterior Apprehension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-16" data-category="shoulder" data-label="Sh Sulcus Sign">
+                    <label for="shoulder-16">Sh Sulcus Sign</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-17" data-category="shoulder" data-label="Sh Speed's Test">
+                    <label for="shoulder-17">Sh Speed's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-18" data-category="shoulder" data-label="Sh Yergason's Test">
+                    <label for="shoulder-18">Sh Yergason's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-19" data-category="shoulder" data-label="Empty Can Test">
+                    <label for="shoulder-19">Empty Can Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-20" data-category="shoulder" data-label="Sh Lift-off Sign">
+                    <label for="shoulder-20">Sh Lift-off Sign</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-21" data-category="shoulder" data-label="Sh Biceps Load Test">
+                    <label for="shoulder-21">Sh Biceps Load Test</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-22" checked data-category="shoulder" data-label="Sh Passive Flexion">
+                    <label for="shoulder-22">Sh Passive Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-23" data-category="shoulder" data-label="Sh Passive Abduction">
+                    <label for="shoulder-23">Sh Passive Abduction</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-24" checked data-category="shoulder" data-label="Sh Passive Ext Rotation">
+                    <label for="shoulder-24">Sh Passive Ext Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-25" checked data-category="shoulder" data-label="Sh Passive Int Rotation">
+                    <label for="shoulder-25">Sh Passive Int Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-26" data-category="shoulder" data-label="*Sh Quadrant">
+                    <label for="shoulder-26"><span class="clearing-test">*Sh Quadrant</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-27" data-category="shoulder" data-label="Sh PAM">
+                    <label for="shoulder-27">Sh PAM
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Elbow (conditional) -->
+<div class="screen" data-screen-id="elbow" data-conditional="true">
+    <h2>Elbow</h2>
+    <p>Please select the items you would like to assess.</p>
+    <p>Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('elbow')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('elbow')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'elbow')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="elbow">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-1" checked data-category="elbow" data-label="*Elbow Flexion">
+                    <label for="elbow-1"><span class="clearing-test">*Elbow Flexion</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-2" checked data-category="elbow" data-label="*Elbow Extension">
+                    <label for="elbow-2"><span class="clearing-test">*Elbow Extension</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-3" checked data-category="elbow" data-label="*Elbow Abduction">
+                    <label for="elbow-3"><span class="clearing-test">*Elbow Abduction</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-4" checked data-category="elbow" data-label="*Elbow Adduction">
+                    <label for="elbow-4"><span class="clearing-test">*Elbow Adduction</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-5" data-category="elbow" data-label="Elbow PAM">
+                    <label for="elbow-5">Elbow PAM
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-6" data-category="elbow" data-label="Elbow Varus Stress Test">
+                    <label for="elbow-6">Elbow Varus Stress Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-7" data-category="elbow" data-label="Elbow Valgus Stress Test">
+                    <label for="elbow-7">Elbow Valgus Stress Test</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Wrist + Hand (conditional) -->
+<div class="screen" data-screen-id="wrist" data-conditional="true">
+    <h2>Wrist and Hand</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('wrist')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('wrist')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'wrist')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="wrist">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-1" checked data-category="wrist" data-label="*Wrist Flexion">
+                    <label for="wrist-1"><span class="clearing-test">*Wrist Flexion</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-2" checked data-category="wrist" data-label="*Wrist Extension">
+                    <label for="wrist-2"><span class="clearing-test">*Wrist Extension</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-3" checked data-category="wrist" data-label="Wrist Radial Deviation">
+                    <label for="wrist-3">Wrist Radial Deviation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-4" checked data-category="wrist" data-label="Wrist Ulnar Deviation">
+                    <label for="wrist-4">Wrist Ulnar Deviation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-5" checked data-category="wrist" data-label="Forearm Supination">
+                    <label for="wrist-5">Forearm Supination</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-6" checked data-category="wrist" data-label="Forearm Pronation">
+                    <label for="wrist-6">Forearm Pronation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-7" data-category="wrist" data-label="Wrist PAM - DRUJ">
+                    <label for="wrist-7">Wrist PAM - DRUJ
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Distal Radioulnar Joint</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-8" data-category="wrist" data-label="Wrist PAM - RCJ">
+                    <label for="wrist-8">Wrist PAM - RCJ
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Radiocarpal Joint</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-9" data-category="wrist" data-label="Watson's Test">
+                    <label for="wrist-9">Watson's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-10" data-category="wrist" data-label="Finkelstein's Test">
+                    <label for="wrist-10">Finkelstein's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-11" data-category="wrist" data-label="Phalen's Test">
+                    <label for="wrist-11">Phalen's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-12" data-category="wrist" data-label="Squeeze Test">
+                    <label for="wrist-12">Squeeze Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-13" data-category="wrist" data-label="Valgus Stress Test UCL">
+                    <label for="wrist-13">Valgus Stress Test UCL
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Ulnar Collateral Ligament</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-14" data-category="wrist" data-label="Valgus Stress Test 1st MCPJ">
+                    <label for="wrist-14">Valgus Stress Test 1st MCPJ
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Metacarpophalangeal Joint</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-15" data-category="wrist" data-label="TFCC Load Test">
+                    <label for="wrist-15">TFCC Load Test
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Triangular Fibrocartilage Complex</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-16" data-category="wrist" data-label="Piano Key Test">
+                    <label for="wrist-16">Piano Key Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-17" data-category="wrist" data-label="Grind Test">
+                    <label for="wrist-17">Grind Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-18" data-category="wrist" data-label="Pinch Test">
+                    <label for="wrist-18">Pinch Test</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Hip (conditional) -->
+<div class="screen" data-screen-id="hip" data-conditional="true">
+    <h2>Hip</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('hip')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('hip')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'hip')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Standing</h4>
+            <div class="checkbox-grid" data-category="hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-1" data-category="hip" data-label="Hip Flexion">
+                    <label for="hip-1">Hip Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-2" data-category="hip" data-label="Hip Extension">
+                    <label for="hip-2">Hip Extension</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-3" data-category="hip" data-label="Hip Flexion">
+                    <label for="hip-3">Hip Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-4" checked data-category="hip" data-label="Hip Internal Rotation">
+                    <label for="hip-4">Hip Internal Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-5" checked data-category="hip" data-label="Hip External Rotation">
+                    <label for="hip-5">Hip External Rotation</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-6" checked data-category="hip" data-label="*Hip Flexion">
+                    <label for="hip-6"><span class="clearing-test">*Hip Flexion</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-7" checked data-category="hip" data-label="Hip Abduction">
+                    <label for="hip-7">Hip Abduction</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-8" checked data-category="hip" data-label="Hip Adduction">
+                    <label for="hip-8">Hip Adduction</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-9" checked data-category="hip" data-label="Hip Internal Rotation">
+                    <label for="hip-9">Hip Internal Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-10" checked data-category="hip" data-label="Hip External Rotation">
+                    <label for="hip-10">Hip External Rotation</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-11" data-category="hip" data-label="*Hip Quadrant">
+                    <label for="hip-11"><span class="clearing-test">*Hip Quadrant</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-12" data-category="hip" data-label="Hip FABER">
+                    <label for="hip-12">Hip FABER
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Flexion, Abduction, External Rotation</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-13" data-category="hip" data-label="Hip PAMs">
+                    <label for="hip-13">Hip PAMs
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movements</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-14" data-category="hip" data-label="Adductor Squeeze">
+                    <label for="hip-14">Adductor Squeeze</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Prone</h4>
+            <div class="checkbox-grid" data-category="hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-15" checked data-category="hip" data-label="Hip Extension">
+                    <label for="hip-15">Hip Extension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-16" data-category="hip" data-label="Hip Rotation in Extension">
+                    <label for="hip-16">Hip Rotation in Extension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-17" data-category="hip" data-label="Hip PAMs">
+                    <label for="hip-17">Hip PAMs</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: SIJ + Pelvis (conditional) -->
+<div class="screen" data-screen-id="sij" data-conditional="true">
+    <h2>SIJ and Pelvis</h2>
+    <p>Please select the items you would like to assess. Items that are part of a routine assessment are ticked by default.</p>
+    <p>Clearing tests are indicated by an asterisk (*).</p>
+    <p>Selected items will be shown in <strong>Bold</strong></p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('sij')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('sij')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'sij')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Standing</h4>
+            <div class="checkbox-grid" data-category="sij">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-1" data-category="sij" data-label="SIJ Forward Flexion">
+                    <label for="sij-1">SIJ Forward Flexion
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Sacroiliac Joint</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-2" data-category="sij" data-label="SIJ Gillet's/Stork Test">
+                    <label for="sij-2">SIJ Gillet's/Stork Test</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="sij">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-3" data-category="sij" data-label="SIJ Forward Flexion">
+                    <label for="sij-3">SIJ Forward Flexion</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="sij">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-4" checked data-category="sij" data-label="*SIJ Compression">
+                    <label for="sij-4"><span class="clearing-test">*SIJ Compression</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-5" checked data-category="sij" data-label="*SIJ Distraction">
+                    <label for="sij-5"><span class="clearing-test">*SIJ Distraction</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-6" checked data-category="sij" data-label="*SIJ Sacral Thrust">
+                    <label for="sij-6"><span class="clearing-test">*SIJ Sacral Thrust</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-7" checked data-category="sij" data-label="*SIJ Thigh Thrust">
+                    <label for="sij-7"><span class="clearing-test">*SIJ Thigh Thrust</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-8" data-category="sij" data-label="SIJ Gaenslen's Test">
+                    <label for="sij-8">SIJ Gaenslen's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-9" data-category="sij" data-label="Active Straight Leg Raise">
+                    <label for="sij-9">Active Straight Leg Raise</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-10" data-category="sij" data-label="SIJ Arthrokinematic Physiological Glides">
+                    <label for="sij-10">SIJ Arthrokinematic Physiological Glides</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-11" data-category="sij" data-label="SIJ Osteokinematic Glides">
+                    <label for="sij-11">SIJ Osteokinematic Glides</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Prone</h4>
+            <div class="checkbox-grid" data-category="sij">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-12" data-category="sij" data-label="SIJ Sacral Thrust">
+                    <label for="sij-12">SIJ Sacral Thrust</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="sij-13" data-category="sij" data-label="SIJ Prone Leg Raise">
+                    <label for="sij-13">SIJ Prone Leg Raise</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Ankle + Foot (conditional) -->
+<div class="screen" data-screen-id="ankle" data-conditional="true">
+    <h2>Ankle and Foot</h2>
+    <p><strong>Select</strong> the items of assessment that you would like to perform. <strong>Note:</strong> Routine assessment items are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('ankle')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('ankle')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'ankle')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Sitting</h4>
+            <div class="checkbox-grid" data-category="ankle">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-1" data-category="ankle" data-label="Ankle Syndesmosis">
+                    <label for="ankle-1">Ankle Syndesmosis</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Supine</h4>
+            <div class="checkbox-grid" data-category="ankle">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-2" checked data-category="ankle" data-label="*Ankle Dorsiflexion">
+                    <label for="ankle-2"><span class="clearing-test">*Ankle Dorsiflexion</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-3" checked data-category="ankle" data-label="*Ankle Plantarflexion">
+                    <label for="ankle-3"><span class="clearing-test">*Ankle Plantarflexion</span></label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-4" checked data-category="ankle" data-label="Ankle Inversion">
+                    <label for="ankle-4">Ankle Inversion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-5" checked data-category="ankle" data-label="Ankle Eversion">
+                    <label for="ankle-5">Ankle Eversion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-6" data-category="ankle" data-label="Toe Flexion">
+                    <label for="ankle-6">Toe Flexion</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-7" data-category="ankle" data-label="Toe Extension">
+                    <label for="ankle-7">Toe Extension</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-8" data-category="ankle" data-label="Ankle PAM - Inferior Tibiofibular Joint">
+                    <label for="ankle-8">Ankle PAM - Inferior Tibiofibular Joint
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Passive Accessory Movement</span></span>
+                    </label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-9" data-category="ankle" data-label="Ankle PAM - Talocrural Joint">
+                    <label for="ankle-9">Ankle PAM - Talocrural Joint</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-10" data-category="ankle" data-label="Ankle PAM - Subtalar Joint">
+                    <label for="ankle-10">Ankle PAM - Subtalar Joint</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-11" data-category="ankle" data-label="Ankle PAM - Forefoot">
+                    <label for="ankle-11">Ankle PAM - Forefoot</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-12" data-category="ankle" data-label="Ankle - Anterior Drawer Test">
+                    <label for="ankle-12">Ankle - Anterior Drawer Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-13" data-category="ankle" data-label="Ankle - Squeeze Test">
+                    <label for="ankle-13">Ankle - Squeeze Test</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Prone</h4>
+            <div class="checkbox-grid" data-category="ankle">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-14" data-category="ankle" data-label="Thompson's Test">
+                    <label for="ankle-14">Thompson's Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-15" data-category="ankle" data-label="Ankle Talar Tilt">
+                    <label for="ankle-15">Ankle Talar Tilt</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Sidelying/Other</h4>
+            <div class="checkbox-grid" data-category="ankle">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-16" data-category="ankle" data-label="Ankle Talar Tilt">
+                    <label for="ankle-16">Ankle Talar Tilt</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ankle-17" data-category="ankle" data-label="Ankle PAM - Subtalar Joint">
+                    <label for="ankle-17">Ankle PAM - Subtalar Joint</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Muscle Testing Selection -->
+            <div class="screen" data-screen-id="muscle-select">
+                <h2>Muscle Testing</h2>
+                <p>Select all items that you may want to assess. Typically these include all areas that either lie under the patient's symptoms or whose dysfunction can contribute to the patient's symptoms. You will be given the opportunity later to include or exclude specific items.</p>
+                <p style="margin-top: 15px;"><strong>Which contractile structures (including tendons and attachments) could be the source of this patient's symptoms. Select all that lie under the symptoms or could refer pain to produce part of their symptoms:</strong></p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('muscle-select')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('muscle-select')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search regions..." onkeyup="filterTests(this, 'muscle-select')">
+                
+                <div class="checkbox-grid" data-category="muscle-select">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-head" data-category="muscle-select" data-screen="muscle-head" data-label="Head and Neck">
+                        <label for="muscle-head">Head and Neck</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-trunk" data-category="muscle-select" data-screen="muscle-trunk" data-label="Trunk">
+                        <label for="muscle-trunk">Trunk</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-shoulder" data-category="muscle-select" data-screen="muscle-shoulder" data-label="Shoulder">
+                        <label for="muscle-shoulder">Shoulder</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-hip" data-category="muscle-select" data-screen="muscle-hip" data-label="Pelvis and Hip">
+                        <label for="muscle-hip">Pelvis and Hip</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-elbow" data-category="muscle-select" data-screen="muscle-elbow" data-label="Elbow">
+                        <label for="muscle-elbow">Elbow</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-leg" data-category="muscle-select" data-screen="muscle-leg" data-label="Upper Leg and Knee">
+                        <label for="muscle-leg">Upper Leg and Knee</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-wrist" data-category="muscle-select" data-screen="muscle-wrist" data-label="Wrist + Hand">
+                        <label for="muscle-wrist">Wrist + Hand</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="muscle-foot" data-category="muscle-select" data-screen="muscle-foot" data-label="Lower Leg + Foot">
+                        <label for="muscle-foot">Lower Leg + Foot</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCREEN: Trunk Muscle Testing (conditional) -->
+            <div class="screen" data-screen-id="muscle-trunk" data-conditional="true">
+                <h2>Trunk</h2>
+                <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+                <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+                
+                <div class="controls">
+                    <button class="btn-small" onclick="selectAll('muscle-trunk')">Select All</button>
+                    <button class="btn-small" onclick="deselectAll('muscle-trunk')">Deselect All</button>
+                </div>
+                
+                <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-trunk')">
+                
+                <div class="column-layout">
+                    <div class="column">
+                        <h4>Strength 
+                        <span class="info-icon tooltip">i
+                            <span class="tooltiptext">Assessment of muscle strength using resistance</span>
+                        </span>
+                        </h4>
+                        <div class="checkbox-grid" data-category="muscle-trunk">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-1" data-category="muscle-trunk" data-label="Rectus Abdominis">
+                                <label for="trunk-1">Rectus Abdominis</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-2" data-category="muscle-trunk" data-label="External and Internal Obliques">
+                                <label for="trunk-2">External and Internal Obliques</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-3" data-category="muscle-trunk" data-label="Erector Spinae">
+                                <label for="trunk-3">Erector Spinae</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-4" data-category="muscle-trunk" data-label="Transversus Abdominis">
+                                <label for="trunk-4">Transversus Abdominis</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-5" data-category="muscle-trunk" data-label="Multifidus">
+                                <label for="trunk-5">Multifidus</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Length
+                        <span class="info-icon tooltip">i
+                            <span class="tooltiptext">Assessment of muscle length and flexibility</span>
+                        </span>
+                        </h4>
+                        <div class="checkbox-grid" data-category="muscle-trunk">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-6" data-category="muscle-trunk" data-label="Rectus Abdominis">
+                                <label for="trunk-6">Rectus Abdominis</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="column">
+                        <h4>Motor Control
+                        <span class="info-icon tooltip">i
+                            <span class="tooltiptext">Assessment of coordinated muscle activation patterns</span>
+                        </span>
+                        </h4>
+                        <div class="checkbox-grid" data-category="muscle-trunk">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-7" data-category="muscle-trunk" data-label="RTUS Transversus Abdominis">
+                                <label for="trunk-7">RTUS Transversus Abdominis
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Real-Time Ultrasound</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-8" data-category="muscle-trunk" data-label="RTUS Multifidus">
+                                <label for="trunk-8">RTUS Multifidus
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Real-Time Ultrasound</span></span>
+                                </label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="trunk-9" data-category="muscle-trunk" data-label="PBU Transversus Abdominis">
+                                <label for="trunk-9">PBU Transversus Abdominis
+                                <span class="tooltip">ⓘ<span class="tooltiptext">Pressure Biofeedback Unit</span></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+<!-- SCREEN: Head and Neck Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-head" data-conditional="true">
+    <h2>Head and Neck</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-head')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-head')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-head')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength 
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-head">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-1" data-category="muscle-head" data-label="Cx Flexors">
+                    <label for="head-1">Cx Flexors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-2" data-category="muscle-head" data-label="Cx Extensors">
+                    <label for="head-2">Cx Extensors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-3" data-category="muscle-head" data-label="Cx Lateral Flexors">
+                    <label for="head-3">Cx Lateral Flexors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-4" data-category="muscle-head" data-label="Cx Rotators">
+                    <label for="head-4">Cx Rotators</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-head">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-5" data-category="muscle-head" data-label="Upper Trapezius">
+                    <label for="head-5">Upper Trapezius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-6" data-category="muscle-head" data-label="Levator Scapulae">
+                    <label for="head-6">Levator Scapulae</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-7" data-category="muscle-head" data-label="Scalenes">
+                    <label for="head-7">Scalenes</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Motor Control
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle activation patterns</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-head">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-8" data-category="muscle-head" data-label="Craniocervical Flexion Test">
+                    <label for="head-8">Craniocervical Flexion Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="head-9" data-category="muscle-head" data-label="Deep Neck Flexor Endurance">
+                    <label for="head-9">Deep Neck Flexor Endurance</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Shoulder Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-shoulder" data-conditional="true">
+    <h2>Shoulder</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-shoulder')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-shoulder')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-shoulder')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-1" data-category="muscle-shoulder" data-label="Deltoid">
+                    <label for="shoulder-m-1">Deltoid</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-2" data-category="muscle-shoulder" data-label="Supraspinatus">
+                    <label for="shoulder-m-2">Supraspinatus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-3" data-category="muscle-shoulder" data-label="Infraspinatus">
+                    <label for="shoulder-m-3">Infraspinatus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-4" data-category="muscle-shoulder" data-label="Teres Minor">
+                    <label for="shoulder-m-4">Teres Minor</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-5" data-category="muscle-shoulder" data-label="Subscapularis">
+                    <label for="shoulder-m-5">Subscapularis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-6" data-category="muscle-shoulder" data-label="Serratus Anterior">
+                    <label for="shoulder-m-6">Serratus Anterior</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-7" data-category="muscle-shoulder" data-label="Trapezius">
+                    <label for="shoulder-m-7">Trapezius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-8" data-category="muscle-shoulder" data-label="Rhomboids">
+                    <label for="shoulder-m-8">Rhomboids</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-9" data-category="muscle-shoulder" data-label="Pectoralis Major">
+                    <label for="shoulder-m-9">Pectoralis Major</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-10" data-category="muscle-shoulder" data-label="Pectoralis Minor">
+                    <label for="shoulder-m-10">Pectoralis Minor</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-11" data-category="muscle-shoulder" data-label="Latissimus Dorsi">
+                    <label for="shoulder-m-11">Latissimus Dorsi</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Motor Control
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle activation</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-shoulder">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="shoulder-m-12" data-category="muscle-shoulder" data-label="Scapular Control">
+                    <label for="shoulder-m-12">Scapular Control</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Pelvis and Hip Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-hip" data-conditional="true">
+    <h2>Pelvis and Hip</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-hip')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-hip')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-hip')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-1" data-category="muscle-hip" data-label="Iliopsoas">
+                    <label for="hip-m-1">Iliopsoas</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-2" data-category="muscle-hip" data-label="Sartorius">
+                    <label for="hip-m-2">Sartorius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-3" data-category="muscle-hip" data-label="Gluteus Maximus">
+                    <label for="hip-m-3">Gluteus Maximus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-4" data-category="muscle-hip" data-label="Biceps Femoris">
+                    <label for="hip-m-4">Biceps Femoris</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-5" data-category="muscle-hip" data-label="Semitendinosus">
+                    <label for="hip-m-5">Semitendinosus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-6" data-category="muscle-hip" data-label="Semimembranosus">
+                    <label for="hip-m-6">Semimembranosus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-7" data-category="muscle-hip" data-label="Gluteus Medius">
+                    <label for="hip-m-7">Gluteus Medius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-8" data-category="muscle-hip" data-label="Gluteus Minimus">
+                    <label for="hip-m-8">Gluteus Minimus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-9" data-category="muscle-hip" data-label="Tensor Fascia Latae">
+                    <label for="hip-m-9">Tensor Fascia Latae</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-10" data-category="muscle-hip" data-label="Adductor Magnus">
+                    <label for="hip-m-10">Adductor Magnus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-11" data-category="muscle-hip" data-label="Adductor Longus">
+                    <label for="hip-m-11">Adductor Longus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-12" data-category="muscle-hip" data-label="Adductor Brevis">
+                    <label for="hip-m-12">Adductor Brevis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-13" data-category="muscle-hip" data-label="Gracilis">
+                    <label for="hip-m-13">Gracilis</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Strength (continued)
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-14" data-category="muscle-hip" data-label="Pectineus">
+                    <label for="hip-m-14">Pectineus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-15" data-category="muscle-hip" data-label="Piriformis">
+                    <label for="hip-m-15">Piriformis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-16" data-category="muscle-hip" data-label="Gemellus Superior">
+                    <label for="hip-m-16">Gemellus Superior</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-17" data-category="muscle-hip" data-label="Gemellus Inferior">
+                    <label for="hip-m-17">Gemellus Inferior</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-18" data-category="muscle-hip" data-label="Obturator Externus">
+                    <label for="hip-m-18">Obturator Externus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-19" data-category="muscle-hip" data-label="Obturator Internus">
+                    <label for="hip-m-19">Obturator Internus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-20" data-category="muscle-hip" data-label="Quadratus Femoris">
+                    <label for="hip-m-20">Quadratus Femoris</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-21" data-category="muscle-hip" data-label="Modified Thomas Test">
+                    <label for="hip-m-21">Modified Thomas Test</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-22" data-category="muscle-hip" data-label="Piriformis">
+                    <label for="hip-m-22">Piriformis</label>
+                </div>
+            </div>
+            <h4>Motor Control
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle activation</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-hip">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hip-m-23" data-category="muscle-hip" data-label="PBU Lumbar Spine">
+                    <label for="hip-m-23">PBU Lumbar Spine
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Pressure Biofeedback Unit</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Elbow Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-elbow" data-conditional="true">
+    <h2>Elbow</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-elbow')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-elbow')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-elbow')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-elbow">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-1" data-category="muscle-elbow" data-label="Triceps Brachii">
+                    <label for="elbow-m-1">Triceps Brachii</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-2" data-category="muscle-elbow" data-label="Biceps Brachii">
+                    <label for="elbow-m-2">Biceps Brachii</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-3" data-category="muscle-elbow" data-label="Brachialis">
+                    <label for="elbow-m-3">Brachialis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-4" data-category="muscle-elbow" data-label="Brachioradialis">
+                    <label for="elbow-m-4">Brachioradialis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-5" data-category="muscle-elbow" data-label="Supinator">
+                    <label for="elbow-m-5">Supinator</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-6" data-category="muscle-elbow" data-label="Pronator Teres">
+                    <label for="elbow-m-6">Pronator Teres</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-7" data-category="muscle-elbow" data-label="Quadratus">
+                    <label for="elbow-m-7">Quadratus</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-elbow">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-8" data-category="muscle-elbow" data-label="Biceps Brachii">
+                    <label for="elbow-m-8">Biceps Brachii</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="elbow-m-9" data-category="muscle-elbow" data-label="Triceps Brachii">
+                    <label for="elbow-m-9">Triceps Brachii</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Upper Leg and Knee Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-leg" data-conditional="true">
+    <h2>Upper Leg and Knee</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-leg')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-leg')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-leg')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-leg">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="leg-m-1" data-category="muscle-leg" data-label="Quadriceps">
+                    <label for="leg-m-1">Quadriceps</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="leg-m-2" data-category="muscle-leg" data-label="Hamstrings">
+                    <label for="leg-m-2">Hamstrings</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-leg">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="leg-m-3" data-category="muscle-leg" data-label="Quadriceps">
+                    <label for="leg-m-3">Quadriceps</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="leg-m-4" data-category="muscle-leg" data-label="Hamstrings">
+                    <label for="leg-m-4">Hamstrings</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="leg-m-5" data-category="muscle-leg" data-label="ITB">
+                    <label for="leg-m-5">ITB
+                    <span class="tooltip">ⓘ<span class="tooltiptext">Iliotibial Band</span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Wrist + Hand Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-wrist" data-conditional="true">
+    <h2>Wrist + Hand</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-wrist')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-wrist')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-wrist')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-wrist">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-1" data-category="muscle-wrist" data-label="Wrist Flexors">
+                    <label for="wrist-m-1">Wrist Flexors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-2" data-category="muscle-wrist" data-label="Wrist Extensors">
+                    <label for="wrist-m-2">Wrist Extensors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-3" data-category="muscle-wrist" data-label="Finger Flexors">
+                    <label for="wrist-m-3">Finger Flexors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-4" data-category="muscle-wrist" data-label="Finger Extensors">
+                    <label for="wrist-m-4">Finger Extensors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-5" data-category="muscle-wrist" data-label="Intrinsic Hand Muscles">
+                    <label for="wrist-m-5">Intrinsic Hand Muscles</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-wrist">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-6" data-category="muscle-wrist" data-label="Wrist Flexors">
+                    <label for="wrist-m-6">Wrist Flexors</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wrist-m-7" data-category="muscle-wrist" data-label="Wrist Extensors">
+                    <label for="wrist-m-7">Wrist Extensors</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Lower Leg + Foot Muscles (conditional) -->
+<div class="screen" data-screen-id="muscle-foot" data-conditional="true">
+    <h2>Lower Leg and Foot</h2>
+    <p><strong>Select</strong> the items of assessment of muscle and tendon that you would like to perform with this patient.</p>
+    <p>Items that are part of a routine assessment are ticked by default. Clearing tests are indicated by an asterisk (*).</p>
+    
+    <div class="controls">
+        <button class="btn-small" onclick="selectAll('muscle-foot')">Select All</button>
+        <button class="btn-small" onclick="deselectAll('muscle-foot')">Deselect All</button>
+    </div>
+    
+    <input type="text" class="search-box" placeholder="Search tests..." onkeyup="filterTests(this, 'muscle-foot')">
+    
+    <div class="column-layout">
+        <div class="column">
+            <h4>Strength
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle strength</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-foot">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-1" data-category="muscle-foot" data-label="Tibialis Anterior">
+                    <label for="foot-m-1">Tibialis Anterior</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-2" data-category="muscle-foot" data-label="Gastrocnemius">
+                    <label for="foot-m-2">Gastrocnemius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-3" data-category="muscle-foot" data-label="Soleus">
+                    <label for="foot-m-3">Soleus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-4" data-category="muscle-foot" data-label="Tibialis Posterior">
+                    <label for="foot-m-4">Tibialis Posterior</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-5" data-category="muscle-foot" data-label="Peroneus Longus">
+                    <label for="foot-m-5">Peroneus Longus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-6" data-category="muscle-foot" data-label="Peroneus Brevis">
+                    <label for="foot-m-6">Peroneus Brevis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-7" data-category="muscle-foot" data-label="Flexor Digitorum Longus">
+                    <label for="foot-m-7">Flexor Digitorum Longus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-8" data-category="muscle-foot" data-label="Flexor Digitorum Brevis">
+                    <label for="foot-m-8">Flexor Digitorum Brevis</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-9" data-category="muscle-foot" data-label="Flexor Hallucis Longus">
+                    <label for="foot-m-9">Flexor Hallucis Longus</label>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Length
+            <span class="info-icon tooltip">i
+                <span class="tooltiptext">Assessment of muscle length</span>
+            </span>
+            </h4>
+            <div class="checkbox-grid" data-category="muscle-foot">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-10" data-category="muscle-foot" data-label="Gastrocnemius">
+                    <label for="foot-m-10">Gastrocnemius</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="foot-m-11" data-category="muscle-foot" data-label="Soleus">
+                    <label for="foot-m-11">Soleus</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN: Generate Report -->
+            <div class="screen" data-screen-id="generate">
+                <h2>Results – Outcome Measures and Functional Tests</h2>
+                <p>Your selected tests for this patient will be listed in the generated report. This list will be useful as a discussion point with your facilitator prior to performing your physical assessment.</p>
+                <p style="margin-top: 20px;"><strong>Click</strong> Generate Report to see the list. Please be patient as it compiles your choices.</p>
+                
+                <button class="btn-generate" onclick="generateReport()">Generate Report</button>
+            </div>
+
+            <!-- SCREEN: Report Display -->
+            <div class="screen" data-screen-id="report">
+                <h2>Selected Objective Assessments</h2>
+                <p>Please also consider what functional tests and outcome measures you will use as part of your assessment as these are not included in the list below.</p>
+                
+                <div class="report-display" id="reportDisplay">
+                    <!-- Report will be generated here -->
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <p style="margin-bottom: 15px;"><strong>To save your selections:</strong></p>
+                    <button class="btn-generate" onclick="downloadReport()">Download as Text File</button>
+                    <button class="btn-generate" onclick="window.print()" style="background-color: #4A90E2; margin-left: 15px;">Print or Save as PDF</button>
+                </div>
+            </div>
+
+            <!-- SCREEN: End -->
+            <div class="screen" data-screen-id="end">
+                <div class="end-screen">
+                    <h1>End<br>Objective Assessments</h1>
+                    <p>Click Next to start again or close this window to exit</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button class="btn btn-secondary" id="prevBtn" onclick="navigate(-1)">◄ PREV</button>
+            <button class="btn btn-primary" id="nextBtn" onclick="navigate(1)">NEXT ►</button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation State
+        let screenSequence = [];
+        let currentScreenIndex = 0;
+        
+        // Define base screen flow
+        const baseScreens = ['title', 'neuro', 'neurodynamic', 'articulations-select'];
+        const postArticulationScreens = ['muscle-select'];
+        const finalScreens = ['generate', 'report', 'end'];
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            buildScreenSequence();
+            updateProgress();
+            updateButtons();
+            
+            // Apply bold to pre-checked items
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                if (label) label.style.fontWeight = 'bold';
+            });
+            
+            // Add change listeners to all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const label = this.nextElementSibling;
+                    if (label) {
+                        label.style.fontWeight = this.checked ? 'bold' : 'normal';
+                    }
+                    updateProgress();
+                });
+            });
+        });
+        
+        // Build screen sequence based on selections
+        function buildScreenSequence() {
+            screenSequence = [...baseScreens];
+            
+            // Add conditional articulation screens
+            const articulationChecks = document.querySelectorAll('[data-category="articulations-select"]:checked');
+            articulationChecks.forEach(checkbox => {
+                const screenId = checkbox.dataset.screen;
+                if (screenId) {
+                    screenSequence.push(screenId);
+                }
+            });
+            
+            screenSequence.push(...postArticulationScreens);
+            
+            // Add conditional muscle testing screens
+            const muscleChecks = document.querySelectorAll('[data-category="muscle-select"]:checked');
+            muscleChecks.forEach(checkbox => {
+                const screenId = checkbox.dataset.screen;
+                if (screenId) {
+                    screenSequence.push(screenId);
+                }
+            });
+            
+            screenSequence.push(...finalScreens);
+        }
+        
+        // Navigation
+        function navigate(direction) {
+            // Rebuild sequence if we're leaving a selection screen
+            const currentScreen = screenSequence[currentScreenIndex];
+            if (currentScreen === 'articulations-select' || currentScreen === 'muscle-select') {
+                buildScreenSequence();
+            }
+            
+            // Hide current screen
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(s => s.classList.remove('active'));
+            
+            // Update index
+            currentScreenIndex += direction;
+            
+            // Loop back to start if at end
+            if (currentScreenIndex >= screenSequence.length) {
+                currentScreenIndex = 0;
+                buildScreenSequence(); // Rebuild for fresh start
+            } else if (currentScreenIndex < 0) {
+                currentScreenIndex = 0;
+            }
+            
+            // Show new screen
+            const newScreenId = screenSequence[currentScreenIndex];
+            const newScreen = document.querySelector(`[data-screen-id="${newScreenId}"]`);
+            if (newScreen) {
+                newScreen.classList.add('active');
+            }
+            
+            updateProgress();
+            updateButtons();
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            prevBtn.disabled = currentScreenIndex === 0;
+            
+            if (currentScreenIndex === screenSequence.length - 1) {
+                nextBtn.textContent = 'START AGAIN ►';
+            } else {
+                nextBtn.textContent = 'NEXT ►';
+            }
+        }
+        
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            screenSequence.forEach((screenId, index) => {
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'progress-step';
+                
+                // Determine label
+                let label = screenId;
+                if (screenId === 'title') label = 'Intro';
+                else if (screenId === 'neuro') label = 'Neuro';
+                else if (screenId === 'neurodynamic') label = 'Neurodyn';
+                else if (screenId === 'articulations-select') label = 'Artic';
+                else if (screenId === 'muscle-select') label = 'Muscle';
+                else if (screenId === 'generate') label = 'Generate';
+                else if (screenId === 'report') label = 'Report';
+                else if (screenId === 'end') label = 'End';
+                else label = screenId.toUpperCase().substring(0, 4);
+                
+                if (index < currentScreenIndex) {
+                    stepDiv.classList.add('completed');
+                } else if (index === currentScreenIndex) {
+                    stepDiv.classList.add('active');
+                }
+                
+                stepDiv.innerHTML = `
+                    <div class="progress-dot"></div>
+                    ${label}
+                `;
+                progressBar.appendChild(stepDiv);
+            });
+        }
+        
+        // Select/Deselect All
+        function selectAll(category) {
+            const checkboxes = document.querySelectorAll(`input[data-category="${category}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                const label = checkbox.nextElementSibling;
+                if (label) label.style.fontWeight = 'bold';
+            });
+            updateProgress();
+        }
+        
+        function deselectAll(category) {
+            const checkboxes = document.querySelectorAll(`input[data-category="${category}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+                const label = checkbox.nextElementSibling;
+                if (label) label.style.fontWeight = 'normal';
+            });
+            updateProgress();
+        }
+        
+        // Search/Filter
+        function filterTests(searchInput, category) {
+            const searchTerm = searchInput.value.toLowerCase();
+            const container = searchInput.closest('.screen');
+            const items = container.querySelectorAll(`.checkbox-item input[data-category="${category}"]`);
+            
+            items.forEach(checkbox => {
+                const item = checkbox.closest('.checkbox-item');
+                const label = checkbox.nextElementSibling;
+                const text = label ? label.textContent.toLowerCase() : '';
+                
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        
+        // Report Generation
+        function generateReport() {
+            const categories = [
+                { name: 'Neurological/VBI/Dizziness', category: 'neuro' },
+                { name: 'Neurodynamic Testing', category: 'neurodynamic' },
+                { name: 'Cervical Spine', category: 'cx' },
+                { name: 'TMJ', category: 'tmj' },
+                { name: 'Shoulder', category: 'shoulder' },
+                { name: 'Elbow', category: 'elbow' },
+                { name: 'Wrist + Hand', category: 'wrist' },
+                { name: 'Thoracic Spine', category: 'tx' },
+                { name: 'Lumbar Spine', category: 'lx' },
+                { name: 'Hip', category: 'hip' },
+                { name: 'SIJ + Pelvis', category: 'sij' },
+                { name: 'Knee', category: 'knee' },
+                { name: 'Ankle + Foot', category: 'ankle' },
+                { name: 'Head and Neck Muscles', category: 'muscle-head' },
+                { name: 'Trunk Muscles', category: 'muscle-trunk' },
+                { name: 'Shoulder Muscles', category: 'muscle-shoulder' },
+                { name: 'Pelvis and Hip Muscles', category: 'muscle-hip' },
+                { name: 'Elbow Muscles', category: 'muscle-elbow' },
+                { name: 'Upper Leg and Knee Muscles', category: 'muscle-leg' },
+                { name: 'Wrist + Hand Muscles', category: 'muscle-wrist' },
+                { name: 'Lower Leg + Foot Muscles', category: 'muscle-foot' }
+            ];
+            
+            const reportDisplay = document.getElementById('reportDisplay');
+            reportDisplay.innerHTML = '';
+            
+            let hasSelections = false;
+            
+            categories.forEach(cat => {
+                const tests = getSelectedTests(cat.category);
+                if (tests.length > 0) {
+                    hasSelections = true;
+                    const section = document.createElement('div');
+                    section.className = 'report-section';
+                    
+                    const heading = document.createElement('h4');
+                    heading.textContent = cat.name;
+                    section.appendChild(heading);
+                    
+                    const list = document.createElement('ul');
+                    tests.forEach(test => {
+                        const li = document.createElement('li');
+                        li.textContent = test;
+                        list.appendChild(li);
+                    });
+                    section.appendChild(list);
+                    
+                    reportDisplay.appendChild(section);
+                }
+            });
+            
+            if (!hasSelections) {
+                reportDisplay.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No assessments selected. Please go back and make your selections.</p>';
+            }
+            
+            navigate(1); // Move to report screen
+        }
+        
+        function getSelectedTests(category) {
+            const checkboxes = document.querySelectorAll(`input[data-category="${category}"]:checked`);
+            const tests = [];
+            checkboxes.forEach(checkbox => {
+                const label = checkbox.dataset.label || checkbox.nextElementSibling.textContent.trim();
+                tests.push(label);
+            });
+            return tests;
+        }
+        
+        // Download Report
+        function downloadReport() {
+            const categories = [
+                { name: 'Neurological/VBI/Dizziness', category: 'neuro' },
+                { name: 'Neurodynamic Testing', category: 'neurodynamic' },
+                { name: 'Cervical Spine', category: 'cx' },
+                { name: 'TMJ', category: 'tmj' },
+                { name: 'Shoulder', category: 'shoulder' },
+                { name: 'Elbow', category: 'elbow' },
+                { name: 'Wrist + Hand', category: 'wrist' },
+                { name: 'Thoracic Spine', category: 'tx' },
+                { name: 'Lumbar Spine', category: 'lx' },
+                { name: 'Hip', category: 'hip' },
+                { name: 'SIJ + Pelvis', category: 'sij' },
+                { name: 'Knee', category: 'knee' },
+                { name: 'Ankle + Foot', category: 'ankle' },
+                { name: 'Head and Neck Muscles', category: 'muscle-head' },
+                { name: 'Trunk Muscles', category: 'muscle-trunk' },
+                { name: 'Shoulder Muscles', category: 'muscle-shoulder' },
+                { name: 'Pelvis and Hip Muscles', category: 'muscle-hip' },
+                { name: 'Elbow Muscles', category: 'muscle-elbow' },
+                { name: 'Upper Leg and Knee Muscles', category: 'muscle-leg' },
+                { name: 'Wrist + Hand Muscles', category: 'muscle-wrist' },
+                { name: 'Lower Leg + Foot Muscles', category: 'muscle-foot' }
+            ];
+            
+            let textContent = 'SELECTED OBJECTIVE ASSESSMENTS\n';
+            textContent += '='.repeat(60) + '\n\n';
+            textContent += 'Generated: ' + new Date().toLocaleString() + '\n';
+            textContent += 'Griffith University - Master of Musculoskeletal and Sports Physiotherapy\n\n';
+            
+            categories.forEach(cat => {
+                const tests = getSelectedTests(cat.category);
+                if (tests.length > 0) {
+                    textContent += cat.name.toUpperCase() + ':\n';
+                    textContent += '-'.repeat(cat.name.length) + '\n';
+                    tests.forEach(test => {
+                        textContent += '  • ' + test + '\n';
+                    });
+                    textContent += '\n';
+                }
+            });
+            
+            textContent += '\n' + '='.repeat(60) + '\n';
+            textContent += 'Please also consider functional tests and outcome measures\n';
+            textContent += 'for your comprehensive assessment.\n';
+            
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Assessment_Selection_' + new Date().toISOString().split('T')[0] + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

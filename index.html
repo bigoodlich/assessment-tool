@@ -2632,10 +2632,16 @@
         const finalScreens = ['generate', 'report', 'end'];
         
         // Initialize on load
-        document.addEventListener('DOMContentLoaded', function() {
-            buildScreenSequence();
-            updateProgress();
-            updateButtons();
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Force uncheck all boxes (clears auto-selections)
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    buildScreenSequence();
+    updateProgress();
+    updateButtons();
+    
+    // ... rest of the code remains the same
             
             // Apply bold to pre-checked items
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
